@@ -21,7 +21,7 @@ export default function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-14">
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
-              <img src={rtsLogo} alt="RTS Technology" className="w-10 h-10 object-contain" />
+              <img src={rtsLogo} alt="RTS Technology" className="w-10 h-10 object-contain [mix-blend-mode:screen]" />
               <span className="font-bold text-white text-base" style={{ fontFamily: 'Syne, sans-serif' }}>
                 RTS <span className="text-red-500">Technology</span>
               </span>

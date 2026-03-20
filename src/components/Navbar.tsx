@@ -33,7 +33,7 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         <div className="flex items-center gap-2 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-          <img src={rtsLogo} alt="RTS Technology" className="w-10 h-10 object-contain" />
+          <img src={rtsLogo} alt="RTS Technology" className="w-10 h-10 object-contain [mix-blend-mode:screen]" />
           <span className="font-bold text-white text-base tracking-tight hidden sm:block" style={{ fontFamily: 'Syne, sans-serif' }}>
             RTS <span className="text-red-500">Technology</span>
           </span>

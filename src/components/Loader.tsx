@@ -165,7 +165,7 @@ export default function Loader({ onDone }: { onDone: () => void }) {
                   <motion.img
                     src={rtsLogo}
                     alt="RTS Technology"
-                    className="w-28 h-28 object-contain relative z-10"
+                    className="w-28 h-28 object-contain relative z-10 [mix-blend-mode:screen]"
                     initial={{ opacity: 0, scale: 0.5 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 0.2, duration: 0.5 }}
