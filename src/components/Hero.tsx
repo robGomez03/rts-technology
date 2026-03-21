@@ -100,7 +100,7 @@ export default function Hero() {
               {/* Glow */}
               <div className="absolute w-48 h-48 rounded-full bg-red-700/10 blur-2xl" />
               {/* Logo */}
-              <img src={rtsLogo} alt="RTS Technology" className="relative z-10 w-44 h-44 object-contain [mix-blend-mode:screen]" />
+              <img src={rtsLogo} alt="RTS Technology" className="relative z-10 w-44 h-44 object-contain [mix-blend-mode:screen] brightness-200" />
               {/* Floating badges */}
               {[
                 { icon: Shield, label: 'Seguridad', pos: '-top-4 -right-4' },
