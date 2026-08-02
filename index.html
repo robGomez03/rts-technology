@@ -52,22 +52,20 @@
     <!--
       Las fuentes se cargaban con @import dentro del CSS, lo que encadena
       peticiones (HTML -> CSS -> CSS de Google -> ficheros) y retrasa el primer
-      pintado. Con preconnect + media="print"/onload dejan de bloquear.
+      pintado. `preconnect` abre la conexion TLS en paralelo al HTML.
+
+      Antes se usaba el truco `media="print" onload="this.media='all'"` para que
+      la hoja no bloquease el pintado, pero eso es JavaScript en linea y obliga
+      a abrir la CSP con 'unsafe-inline' en script-src, que es justo lo que
+      frena un XSS. Se prefiere la hoja normal: con preconnect el coste es
+      pequeno y la CSP puede quedarse estricta.
     -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap"
-      media="print"
-      onload="this.media='all'"
     />
-    <noscript>
-      <link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap"
-      />
-    </noscript>
 
     <!--
       Datos estructurados: permiten que Google muestre teléfono, horario y

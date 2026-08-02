@@ -200,6 +200,89 @@ pnpm dlx shadcn@latest add dialog
 
 ---
 
+## Hosting: por qué Cloudflare Pages y no Vercel Hobby
+
+Las [Fair Use Guidelines](https://vercel.com/docs/limits/fair-use-guidelines) de
+Vercel dicen literalmente:
+
+> "Hobby teams are restricted to non-commercial personal use only. All
+> commercial usage of the platform requires either a Pro or Enterprise plan."
+
+Y entre los ejemplos de uso comercial está *"Advertising the sale of a product
+or service"*. Esta web anuncia venta de equipos, soporte y consultoría, así que
+en el plan gratuito de Vercel está **fuera de los términos** y el proyecto es
+suspendible. El plan Pro son 20 $/mes.
+
+Cloudflare Pages no tiene esa restricción: su acuerdo self-serve no prohíbe el
+uso comercial en el plan gratuito (lo único que veta es procesar tarjetas de
+crédito, que aquí no aplica).
+
+| | Vercel Hobby | Cloudflare Pages Free |
+| --- | --- | --- |
+| Uso comercial | **Prohibido** | Permitido |
+| Funciones | 1 M/mes | 100.000/día |
+| Estáticos | 100 GB/mes | Ilimitado |
+| Builds | — | 500/mes |
+| Dominios propios | Producción pública solo con dominio | 100 por proyecto |
+
+**El código funciona en las dos plataformas**, así que cambiar de hosting no
+obliga a reescribir nada:
+
+```
+server/contact.ts           <- toda la logica (validacion, antispam, Resend)
+api/contact.ts              <- adaptador de Vercel
+functions/api/contact.ts    <- adaptador de Cloudflare Pages
+```
+
+### Desplegar en Cloudflare Pages
+
+1. [dash.cloudflare.com](https://dash.cloudflare.com) → **Workers & Pages** →
+   *Create* → **Pages** → *Connect to Git* → elige `robGomez03/rts-technology`.
+2. Configuración de compilación:
+   - Framework preset: **Vite**
+   - Build command: `npm run build`
+   - Build output directory: `dist`
+3. **Settings → Environment variables** → añade `RESEND_API_KEY` y márcala como
+   **Secret** (así queda cifrada y no se puede volver a leer).
+4. Guarda y despliega. Cloudflare detecta `functions/` solo y publica
+   `/api/contact`.
+
+Las cabeceras de seguridad se aplican desde [`public/_headers`](public/_headers).
+
+### Sobre la protección de despliegue de Vercel
+
+Si mantienes también el proyecto en Vercel: en Hobby, *Standard Protection*
+protege los **deployment URLs generados** (`*.vercel.app`) y solo un **dominio
+propio** queda público. Por eso una URL `.vercel.app` sin dominio conectado
+devuelve `302` al login de Vercel con `X-Robots-Tag: noindex`. Se desactiva en
+*Settings → Deployment Protection* (la documentación confirma que las cuentas
+Hobby pueden activarlo y desactivarlo).
+
+## Seguridad
+
+Cabeceras aplicadas en ambas plataformas — [`public/_headers`](public/_headers)
+para Cloudflare y la sección `headers` de [`vercel.json`](vercel.json). **Hay
+que mantener los dos ficheros sincronizados.**
+
+| Cabecera | Para qué |
+| --- | --- |
+| `Content-Security-Policy` | Solo se ejecuta JS propio; bloquea recursos externos |
+| `X-Content-Type-Options: nosniff` | El navegador no "adivina" tipos de fichero |
+| `X-Frame-Options: DENY` | Nadie puede incrustar la web en un iframe |
+| `Referrer-Policy` | No filtra la ruta completa a sitios externos |
+| `Permissions-Policy` | Deniega cámara, micrófono, geolocalización y pagos |
+| `Strict-Transport-Security` | Fuerza HTTPS durante un año |
+
+Dos decisiones que conviene no revertir sin pensarlo:
+
+- **`script-src 'self'` sin `'unsafe-inline'`.** Por eso `index.html` ya no usa
+  el truco `media="print" onload="this.media='all'"` para cargar las fuentes:
+  era JavaScript en línea y habría obligado a abrir la CSP justo por donde
+  entra un XSS. Con `preconnect` el coste de la hoja normal es pequeño.
+- **`style-src` sí lleva `'unsafe-inline'`.** Framer Motion anima escribiendo
+  en el atributo `style`; sin esto no habría ninguna animación. Permitir
+  estilos en línea es mucho menos peligroso que permitir scripts.
+
 ## Despliegue
 
 Vercel detecta el preset de Vite y publica `dist/`.
