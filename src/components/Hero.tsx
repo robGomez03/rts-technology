@@ -4,7 +4,7 @@ import rtsLogo from '../assets/rts-logo.png'
 
 export default function Hero() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden grid-bg">
+    <section id="inicio" className="relative min-h-screen flex items-center justify-center overflow-hidden grid-bg">
       {/* Radial glow */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <div className="w-[700px] h-[700px] rounded-full bg-red-700/6 blur-[140px]" />
@@ -36,7 +36,7 @@ export default function Hero() {
 
             <motion.p
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.25 }}
-              className="text-lg text-white/45 max-w-xl mb-10 leading-relaxed"
+              className="text-lg text-white/65 max-w-xl mb-10 leading-relaxed"
             >
               Diseñamos, implementamos y mantenemos infraestructura tecnológica para empresas que necesitan operar sin interrupciones.
             </motion.p>
@@ -45,18 +45,19 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.4 }}
               className="flex flex-col sm:flex-row gap-4"
             >
-              <button
-                onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+              {/* Enlaces reales: se pueden enfocar, compartir y abrir en otra pestaña. */}
+              <a
+                href="#contact"
                 className="group flex items-center justify-center gap-2 px-8 py-4 bg-red-600 text-white rounded-xl font-semibold text-base hover:bg-red-500 transition-all duration-200 shadow-[0_0_30px_rgba(204,32,32,0.35)]"
               >
-                Solicitar asesoría <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-              </button>
-              <button
-                onClick={() => document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' })}
-                className="flex items-center justify-center gap-2 px-8 py-4 border border-white/10 text-white/60 rounded-xl font-medium text-base hover:border-red-600/40 hover:text-white transition-all duration-200"
+                Solicitar asesoría <ArrowRight size={16} aria-hidden="true" className="group-hover:translate-x-1 transition-transform" />
+              </a>
+              <a
+                href="#services"
+                className="flex items-center justify-center gap-2 px-8 py-4 border border-white/10 text-white/70 rounded-xl font-medium text-base hover:border-red-600/40 hover:text-white transition-all duration-200"
               >
                 Ver servicios
-              </button>
+              </a>
             </motion.div>
 
             {/* Stats */}
@@ -67,7 +68,7 @@ export default function Hero() {
               {[['200+', 'Proyectos'], ['99.9%', 'Uptime'], ['10+', 'Años exp.']].map(([val, label]) => (
                 <div key={label}>
                   <div className="text-2xl font-bold text-red-400" style={{ fontFamily: 'Syne, sans-serif' }}>{val}</div>
-                  <div className="text-xs text-white/35 mt-0.5">{label}</div>
+                  <div className="text-xs text-white/55 mt-0.5">{label}</div>
                 </div>
               ))}
             </motion.div>
@@ -100,7 +101,19 @@ export default function Hero() {
               {/* Glow */}
               <div className="absolute w-48 h-48 rounded-full bg-red-700/10 blur-2xl" />
               {/* Logo */}
-              <img src={rtsLogo} alt="RTS Technology" className="relative z-10 w-44 h-44 object-contain [mix-blend-mode:screen] brightness-200" />
+              {/*
+                Sin `mix-blend-mode:screen` ni `brightness-200`: el PNG ya es
+                transparente y esos filtros quemaban la marca (el gris #8a8a8a
+                se iba a blanco puro y el rojo se sobresaturaba).
+              */}
+              <img
+                src={rtsLogo}
+                alt="RTS Technology Solutions"
+                width={176}
+                height={176}
+                fetchPriority="high"
+                className="relative z-10 w-44 h-44 object-contain"
+              />
               {/* Floating badges */}
               {[
                 { icon: Shield, label: 'Seguridad', pos: '-top-4 -right-4' },

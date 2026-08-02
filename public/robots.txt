@@ -1,0 +1,7 @@
+# RTS Technology Solutions
+# TODO: cambiar el dominio si conectas uno propio en Vercel
+
+User-agent: *
+Allow: /
+
+Sitemap: https://rts-technology-robertico959-2232s-projects.vercel.app/sitemap.xml

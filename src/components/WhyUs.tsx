@@ -25,7 +25,7 @@ export default function WhyUs() {
             <h2 className="text-4xl md:text-5xl font-bold mt-3 mb-6 leading-tight" style={{ fontFamily: 'Syne, sans-serif' }}>
               Tu tecnología,<br /><span className="red-gradient">nuestra responsabilidad</span>
             </h2>
-            <p className="text-white/45 text-lg leading-relaxed mb-8">
+            <p className="text-white/65 text-lg leading-relaxed mb-8">
               Empresas que dependen de su tecnología necesitan un socio estratégico que anticipe problemas y garantice continuidad operativa.
             </p>
             <div className="flex items-center gap-6">
@@ -34,7 +34,7 @@ export default function WhyUs() {
                   {i > 0 && <div key={`div-${i}`} className="w-px h-12 bg-white/10" />}
                   <div key={val}>
                     <div className="text-3xl font-bold text-red-400" style={{ fontFamily: 'Syne, sans-serif' }}>{val}</div>
-                    <div className="text-sm text-white/35 mt-1">{label}</div>
+                    <div className="text-sm text-white/55 mt-1">{label}</div>
                   </div>
                 </>
               ))}
@@ -48,7 +48,7 @@ export default function WhyUs() {
               >
                 <r.icon size={20} className="text-red-400 mb-3" />
                 <h4 className="text-sm font-semibold text-white mb-1" style={{ fontFamily: 'Syne, sans-serif' }}>{r.title}</h4>
-                <p className="text-xs text-white/38 leading-relaxed">{r.desc}</p>
+                <p className="text-xs text-white/60 leading-relaxed">{r.desc}</p>
               </motion.div>
             ))}
           </div>

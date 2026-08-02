@@ -26,7 +26,7 @@ export default function Services() {
           <h2 className="text-4xl md:text-5xl font-bold mt-3 mb-4" style={{ fontFamily: 'Syne, sans-serif' }}>
             Todo lo que tu empresa<br /><span className="red-gradient">necesita en tecnología</span>
           </h2>
-          <p className="text-white/45 max-w-xl text-lg leading-relaxed">Un portafolio completo para que no tengas que buscar múltiples proveedores.</p>
+          <p className="text-white/65 max-w-xl text-lg leading-relaxed">Un portafolio completo para que no tengas que buscar múltiples proveedores.</p>
         </motion.div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
           {services.map((svc, i) => (
@@ -37,9 +37,9 @@ export default function Services() {
               <div className="w-10 h-10 rounded-xl bg-red-600/12 flex items-center justify-center mb-4 group-hover:bg-red-600/22 transition-colors duration-300">
                 <svc.icon size={18} className="text-red-400" />
               </div>
-              <span className="text-[10px] font-medium text-red-500/70 tracking-widest uppercase">{svc.tag}</span>
+              <span className="text-[10px] font-medium text-red-500 tracking-widest uppercase">{svc.tag}</span>
               <h3 className="text-base font-semibold mt-1 mb-2 text-white" style={{ fontFamily: 'Syne, sans-serif' }}>{svc.title}</h3>
-              <p className="text-sm text-white/40 leading-relaxed">{svc.desc}</p>
+              <p className="text-sm text-white/60 leading-relaxed">{svc.desc}</p>
             </motion.div>
           ))}
         </div>

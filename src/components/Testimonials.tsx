@@ -39,7 +39,7 @@ export default function Testimonials() {
                 <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${t.color} flex items-center justify-center text-white text-xs font-bold`}>{t.avatar}</div>
                 <div>
                   <div className="text-sm font-semibold text-white" style={{ fontFamily: 'Syne, sans-serif' }}>{t.name}</div>
-                  <div className="text-xs text-white/35">{t.role}</div>
+                  <div className="text-xs text-white/55">{t.role}</div>
                 </div>
               </div>
             </motion.div>

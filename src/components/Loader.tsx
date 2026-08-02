@@ -87,7 +87,7 @@ export default function Loader({ onDone }: { onDone: () => void }) {
                     <div className="w-3 h-3 rounded-full bg-red-500/70" />
                     <div className="w-3 h-3 rounded-full bg-yellow-500/40" />
                     <div className="w-3 h-3 rounded-full bg-green-500/40" />
-                    <span className="ml-3 text-xs text-white/30 font-mono">rts-system-boot — bash</span>
+                    <span className="ml-3 text-xs text-white/55 font-mono">rts-system-boot — bash</span>
                   </div>
                   <div ref={termRef} className="h-52 overflow-y-auto px-5 py-4 font-mono text-xs space-y-1">
                     {lines.map((line, i) => (
@@ -107,7 +107,7 @@ export default function Loader({ onDone }: { onDone: () => void }) {
                   </div>
                 </div>
                 <div className="mt-5">
-                  <div className="flex justify-between text-xs text-white/30 font-mono mb-2">
+                  <div className="flex justify-between text-xs text-white/55 font-mono mb-2">
                     <span>CARGANDO SISTEMA</span>
                     <span>{progress}%</span>
                   </div>
@@ -165,7 +165,7 @@ export default function Loader({ onDone }: { onDone: () => void }) {
                   <motion.img
                     src={rtsLogo}
                     alt="RTS Technology"
-                    className="w-28 h-28 object-contain relative z-10 [mix-blend-mode:screen]"
+                    className="w-28 h-28 object-contain relative z-10"
                     initial={{ opacity: 0, scale: 0.5 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 0.2, duration: 0.5 }}
@@ -178,7 +178,7 @@ export default function Loader({ onDone }: { onDone: () => void }) {
                   className="text-center"
                 >
                   <div className="text-xs font-mono text-red-500 tracking-[0.3em] uppercase mb-1">Sistema Inicializado</div>
-                  <div className="text-white/40 text-sm font-mono">Tecnología estable · Segura · Escalable</div>
+                  <div className="text-white/60 text-sm font-mono">Tecnología estable · Segura · Escalable</div>
                 </motion.div>
                 <div className="flex gap-2">
                   {[0, 1, 2].map(i => (

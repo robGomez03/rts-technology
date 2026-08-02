@@ -7,6 +7,28 @@ module.exports = {
   ],
   theme: {
     extend: {
+      /*
+       * Tailwind solo genera modificadores de opacidad cuyo valor este en esta
+       * escala (por defecto: multiplos de 5). Cualquier otro valor se descarta
+       * EN SILENCIO: no hay error, la clase simplemente no existe y el borde o
+       * el fondo no se pinta.
+       *
+       * El diseno usa 6, 7, 8, 12, 22 y 38, asi que sin estos valores se
+       * perdian los bordes de las tarjetas, los fondos de los iconos y varios
+       * resplandores. No cambia ningun color: solo permite expresarlos.
+       */
+      opacity: {
+        2: '0.02',
+        3: '0.03',
+        4: '0.04',
+        6: '0.06',
+        7: '0.07',
+        8: '0.08',
+        12: '0.12',
+        18: '0.18',
+        22: '0.22',
+        38: '0.38',
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

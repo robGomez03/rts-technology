@@ -1,4 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap');
+/*
+ * Las webfonts ya NO se importan aqui: un @import encadena peticiones
+ * (HTML -> CSS -> CSS de Google -> ficheros de fuente) y retrasa el primer
+ * pintado. Se cargan desde <head> en index.html con preconnect.
+ */
 
 @tailwind base;
 @tailwind components;
@@ -13,7 +17,17 @@
   --dark2: #111111;
 }
 
-* { scroll-behavior: smooth; }
+/*
+ * `scroll-behavior` va solo en la raiz. Aplicarlo con `*` obliga al navegador
+ * a evaluar la propiedad en cada nodo del arbol sin ningun efecto extra.
+ *
+ * `scroll-padding-top` evita que la barra de navegacion fija tape el titulo de
+ * la seccion a la que se salta desde el menu.
+ */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 6rem;
+}
 
 body {
   font-family: 'DM Sans', sans-serif;
@@ -22,6 +36,56 @@ body {
 
 h1, h2, h3, h4, h5 {
   font-family: 'Syne', sans-serif;
+}
+
+/* Foco visible para quien navega con teclado. */
+:focus-visible {
+  outline: 2px solid #e63030;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/*
+ * El desplegable del formulario.
+ *
+ * Bug 1: el <select> hereda `color: white`, pero el navegador dibuja la lista
+ * desplegada sobre el fondo del SISTEMA (blanco en Windows y Android). El
+ * resultado era texto blanco sobre blanco: las opciones no se leian. Hay que
+ * darle color de fondo y de texto explicitos a cada <option>.
+ *
+ * Bug 2: con `appearance: none` desaparece la flecha nativa y el desplegable
+ * pasaba por un campo de texto normal. Se repone con una flecha SVG de fondo.
+ */
+select option,
+select optgroup {
+  background-color: #14100f;
+  color: #ffffff;
+}
+
+select option:checked {
+  background-color: #cc2020;
+  color: #ffffff;
+}
+
+.select-flecha {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23e63030' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  /* Deja sitio a la flecha para que no se solape con el texto largo. */
+  padding-right: 2.75rem;
+}
+
+/* Respeta a quien haya pedido menos movimiento en su sistema operativo. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 .red-gradient {
