@@ -4,3 +4,6 @@ dist
 bundle.html
 *.local
 .env
+.env.*
+!.env.example
+.vercel

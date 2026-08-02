@@ -52,9 +52,65 @@ const escapar = (v: string) =>
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
 
+/**
+ * Límite de peticiones por IP. Protege la cuota del plan gratuito de Resend
+ * (100 correos/día, 3.000/mes): sin esto, un bot puede agotarla en minutos y
+ * dejar el formulario inservible el resto del día.
+ *
+ * Es "best effort": el runtime Edge no tiene almacenamiento compartido, así
+ * que el contador vive en memoria de cada instancia y no es global. Frena el
+ * abuso normal, no un ataque distribuido. Para un límite estricto haría falta
+ * Vercel KV o Upstash.
+ */
+const VENTANA_MS = 10 * 60 * 1000
+const MAX_POR_VENTANA = 5
+const vistas = new Map<string, number[]>()
+
+function demasiadasPeticiones(ip: string): boolean {
+  const ahora = Date.now()
+  const previas = (vistas.get(ip) ?? []).filter(t => ahora - t < VENTANA_MS)
+  previas.push(ahora)
+  vistas.set(ip, previas)
+
+  // Evita que el Map crezca sin control en instancias de larga vida.
+  if (vistas.size > 5000) {
+    for (const [k, v] of vistas) {
+      if (v.every(t => ahora - t >= VENTANA_MS)) vistas.delete(k)
+    }
+  }
+  return previas.length > MAX_POR_VENTANA
+}
+
+/** Longitudes máximas. Evitan correos gigantes y payloads de abuso. */
+const LIMITES = {
+  nombre: 100,
+  email: 200,
+  empresa: 150,
+  servicio: 120,
+  mensaje: 5000,
+  origen: 500,
+} as const
+
+const recortar = (v: string | undefined, max: number) => (v ?? '').trim().slice(0, max)
+
 export default async function handler(request: Request): Promise<Response> {
   if (request.method !== 'POST') {
     return json({ error: 'Método no permitido' }, 405)
+  }
+
+  // Rechaza cuerpos desmesurados antes siquiera de leerlos.
+  const longitud = Number(request.headers.get('content-length') ?? 0)
+  if (longitud > 20_000) {
+    return json({ error: 'Solicitud demasiado grande' }, 413)
+  }
+
+  const ip =
+    request.headers.get('x-forwarded-for')?.split(',')[0].trim() ??
+    request.headers.get('x-real-ip') ??
+    'desconocida'
+
+  if (demasiadasPeticiones(ip)) {
+    return json({ error: 'Demasiadas solicitudes. Espera unos minutos.' }, 429)
   }
 
   let datos: Solicitud
@@ -67,9 +123,9 @@ export default async function handler(request: Request): Promise<Response> {
   // Bot detectado: se responde OK para no darle pistas, pero no se envía nada.
   if (datos.web) return json({ ok: true }, 200)
 
-  const nombre = (datos.nombre ?? '').trim()
-  const email = (datos.email ?? '').trim()
-  const mensaje = (datos.mensaje ?? '').trim()
+  const nombre = recortar(datos.nombre, LIMITES.nombre)
+  const email = recortar(datos.email, LIMITES.email)
+  const mensaje = recortar(datos.mensaje, LIMITES.mensaje)
 
   if (nombre.length < 2 || mensaje.length < 10 || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
     return json({ error: 'Faltan datos obligatorios o el correo no es válido' }, 400)
@@ -81,9 +137,9 @@ export default async function handler(request: Request): Promise<Response> {
     return json({ error: 'Envío de correo no configurado', codigo: 'SIN_CONFIGURAR' }, 503)
   }
 
-  const empresa = (datos.empresa ?? '').trim() || 'No indicada'
-  const servicio = (datos.servicio ?? '').trim() || 'No indicado'
-  const origen = (datos.origen ?? '').trim() || 'No indicado'
+  const empresa = recortar(datos.empresa, LIMITES.empresa) || 'No indicada'
+  const servicio = recortar(datos.servicio, LIMITES.servicio) || 'No indicado'
+  const origen = recortar(datos.origen, LIMITES.origen) || 'No indicado'
 
   const filas = [
     ['Nombre', nombre],
@@ -131,7 +187,9 @@ export default async function handler(request: Request): Promise<Response> {
         to: [process.env.CONTACT_TO || DESTINO_POR_DEFECTO],
         // Al responder en Gmail, la respuesta va directa al cliente.
         reply_to: email,
-        subject: `Nueva solicitud web — ${nombre}`,
+        // Sin saltos de línea: un asunto multilínea puede confundir a algunos
+        // clientes de correo.
+        subject: `Nueva solicitud web — ${nombre.replace(/[\r\n]+/g, ' ')}`,
         html,
       }),
     })

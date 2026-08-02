@@ -101,12 +101,39 @@ comprueba **también el cuerpo de la respuesta**.
 
 ### Protecciones
 
-- Trampa antispam (campo oculto) validada en cliente **y** en servidor.
-- Rechazo de envíos hechos en menos de 2 segundos.
-- Todo el contenido del formulario se escapa antes de incrustarlo en el HTML
-  del correo, para que nadie pueda inyectar marcado.
-- El `reply_to` es el correo del cliente: puedes responder directamente desde
-  Gmail y le llega a él.
+Pensadas para el **plan gratuito de Resend** (100 correos/día, 3.000/mes): sin
+ellas, un bot podría agotar la cuota en minutos y dejarte sin formulario el
+resto del día.
+
+| Protección                          | Detalle                                  |
+| ----------------------------------- | ---------------------------------------- |
+| Límite por IP                       | 5 envíos cada 10 minutos → `429`         |
+| Tamaño máximo de petición           | 20 KB → `413`                            |
+| Recorte de campos                   | mensaje 5.000 car., nombre 100, resto según `LIMITES` |
+| Trampa antispam (campo oculto)      | validada en cliente **y** en servidor    |
+| Envíos en menos de 2 segundos       | rechazados (comportamiento de bot)       |
+| Escapado de HTML                    | el contenido no puede inyectar marcado en el correo |
+| Asunto sin saltos de línea          | evita asuntos malformados                |
+
+> El límite por IP es *best effort*: el runtime Edge no tiene almacenamiento
+> compartido, así que el contador vive en memoria de cada instancia y no es
+> global. Frena el abuso normal, no un ataque distribuido. Para un límite
+> estricto haría falta Vercel KV o Upstash.
+
+El `reply_to` es el correo del cliente: puedes responder directamente desde
+Gmail y le llega a él.
+
+### Seguridad de la clave
+
+`RESEND_API_KEY` es una variable **de servidor**: la lee `api/contact.ts` y
+nunca llega al navegador. No la pongas nunca con el prefijo `VITE_`, porque
+todo lo que empieza por `VITE_` se incrusta en el JavaScript público.
+
+`.gitignore` cubre `.env`, `.env.*` y `*.local`, así que la clave no puede
+acabar en el repositorio por accidente.
+
+Si una clave se expone alguna vez (un pantallazo, un chat, un commit), bórrala
+en *resend.com → API Keys* y crea otra: rotarla es inmediato y gratis.
 
 ---
 
