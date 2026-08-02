@@ -1,0 +1,15 @@
+{
+  // Configuracion de Cloudflare Pages.
+  //
+  // Con este fichero en el repo, el build no depende de lo que se teclee en el
+  // panel: Cloudflare lee de aqui el directorio de salida y la fecha de
+  // compatibilidad. La carpeta functions/ se detecta sola y publica
+  // /api/contact.
+  //
+  // Las variables de entorno (RESEND_API_KEY) NO van aqui: se definen en el
+  // panel como Secret para que queden cifradas.
+  "$schema": "https://developers.cloudflare.com/schema/wrangler.json",
+  "name": "rts-technology",
+  "pages_build_output_dir": "./dist",
+  "compatibility_date": "2026-08-01"
+}

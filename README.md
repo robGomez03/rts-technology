@@ -236,18 +236,32 @@ functions/api/contact.ts    <- adaptador de Cloudflare Pages
 
 ### Desplegar en Cloudflare Pages
 
+El repo ya trae todo lo necesario, así que la configuración se reduce a
+conectar y añadir la clave:
+
 1. [dash.cloudflare.com](https://dash.cloudflare.com) → **Workers & Pages** →
    *Create* → **Pages** → *Connect to Git* → elige `robGomez03/rts-technology`.
-2. Configuración de compilación:
-   - Framework preset: **Vite**
-   - Build command: `npm run build`
-   - Build output directory: `dist`
-3. **Settings → Environment variables** → añade `RESEND_API_KEY` y márcala como
-   **Secret** (así queda cifrada y no se puede volver a leer).
-4. Guarda y despliega. Cloudflare detecta `functions/` solo y publica
-   `/api/contact`.
+2. Deja el build command en `npm run build`. El directorio de salida lo lee de
+   [`wrangler.jsonc`](wrangler.jsonc) (`pages_build_output_dir: "./dist"`), así
+   que no depende de lo que se teclee en el panel.
+3. **Settings → Variables and Secrets** → añade `RESEND_API_KEY` como
+   **Secret** (queda cifrada y no se puede volver a leer).
+4. *Retry deployment* para que la clave entre en vigor.
 
-Las cabeceras de seguridad se aplican desde [`public/_headers`](public/_headers).
+Qué se despliega solo, sin configurar nada:
+
+| Fichero | Efecto |
+| --- | --- |
+| `functions/api/contact.ts` | Publica `/api/contact` |
+| `public/_headers` | Cabeceras de seguridad y caché |
+| `public/404.html` | Página de error propia, con la marca |
+| `public/robots.txt`, `sitemap.xml` | SEO |
+
+En Pages las Functions se resuelven **antes** que los assets estáticos, así que
+`/api/contact` siempre llega a la función y nunca al HTML.
+
+Las rutas inexistentes devuelven un **404 real**, no la portada con estado 200.
+Un "soft 404" hace que Google indexe páginas fantasma.
 
 ### Sobre la protección de despliegue de Vercel
 

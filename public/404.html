@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="es-DO">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>Página no encontrada · RTS Technology Solutions</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <!--
+      Estilos en linea a proposito: esta pagina vive fuera del bundle de Vite,
+      asi que no puede depender del CSS generado. La CSP permite style-src
+      'unsafe-inline', no script-src, y aqui no hay ningun script.
+    -->
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #0a0a0a;
+        color: #fff;
+        font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+        text-align: center;
+        padding: 24px;
+        background-image:
+          linear-gradient(rgba(204, 32, 32, 0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(204, 32, 32, 0.04) 1px, transparent 1px);
+        background-size: 60px 60px;
+      }
+      .caja { max-width: 460px; }
+      img { width: 96px; height: 96px; object-fit: contain; margin-bottom: 28px; }
+      .codigo {
+        font-size: 13px;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        color: #e63030;
+        margin-bottom: 12px;
+      }
+      h1 { font-size: 30px; line-height: 1.2; margin-bottom: 14px; font-weight: 700; }
+      p { color: rgba(255, 255, 255, 0.65); font-size: 15px; line-height: 1.6; margin-bottom: 30px; }
+      a.volver {
+        display: inline-block;
+        background: #cc2020;
+        color: #fff;
+        text-decoration: none;
+        padding: 14px 30px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 15px;
+      }
+      a.volver:hover { background: #e63030; }
+      a.volver:focus-visible { outline: 2px solid #e63030; outline-offset: 3px; }
+    </style>
+  </head>
+  <body>
+    <div class="caja">
+      <img src="/favicon-192.png" alt="RTS Technology Solutions" width="96" height="96" />
+      <div class="codigo">Error 404</div>
+      <h1>Esta página no existe</h1>
+      <p>
+        El enlace que seguiste puede estar roto o la página se movió.
+        Desde el inicio puedes ver todos nuestros servicios y contactarnos.
+      </p>
+      <a class="volver" href="/">Volver al inicio</a>
+    </div>
+  </body>
+</html>
