@@ -103,21 +103,43 @@ export default function Contact() {
         body: JSON.stringify({
           nombre: form.name,
           email: form.email,
-          empresa: form.company || 'No indicada',
-          servicio: form.service || 'No indicado',
+          empresa: form.company,
+          servicio: form.service,
           mensaje: form.message,
           origen: window.location.href,
-          // Campos que FormSubmit interpreta para dar formato al correo.
-          // Otros proveedores simplemente los guardan como un campo mas.
-          _subject: `Nueva solicitud web — ${form.name}`,
-          _template: 'table',
-          _captcha: 'false',
         }),
       })
-      if (!respuesta.ok) throw new Error(`El servidor respondió ${respuesta.status}`)
+
+      /*
+       * El servidor todavia no sabe enviar correo (falta RESEND_API_KEY).
+       * Antes de dar la solicitud por perdida, se abre el correo del visitante.
+       */
+      if (respuesta.status === 503) {
+        window.location.href = construirMailto(form)
+        setEstado('correo')
+        return
+      }
+
+      /*
+       * No basta con mirar `respuesta.ok`. Algunos servicios contestan HTTP 200
+       * con un `success: "false"` en el cuerpo; fiandonos solo del codigo de
+       * estado le diriamos al visitante "mensaje enviado" sin haber enviado
+       * nada. Hay que leer tambien el cuerpo.
+       */
+      const cuerpo = await respuesta.json().catch(() => null)
+      const falloEnElCuerpo =
+        cuerpo &&
+        typeof cuerpo === 'object' &&
+        (cuerpo.error !== undefined || String(cuerpo.success) === 'false')
+
+      if (!respuesta.ok || falloEnElCuerpo) {
+        throw new Error(cuerpo?.error ?? cuerpo?.message ?? `El servidor respondió ${respuesta.status}`)
+      }
+
       setEstado('enviado')
       setForm(VACIO)
-    } catch {
+    } catch (e) {
+      console.error('No se pudo enviar el formulario:', e)
       setEstado('error')
     }
   }

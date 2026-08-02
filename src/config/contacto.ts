@@ -42,23 +42,18 @@ export const serviciosContacto = [
 ] as const
 
 /**
- * Servicio que entrega el formulario al correo de arriba.
+ * Endpoint que recibe el formulario.
  *
- * Por defecto usa FormSubmit, que no requiere cuenta ni clave de API: recibe
- * el POST y reenvía el contenido a `contacto.email`.
+ * Por defecto es `/api/contact`, una función Serverless del propio proyecto
+ * (ver `api/contact.ts`) que envía el correo con Resend. Al estar en el mismo
+ * dominio no hay CORS que falle, ningún bloqueador de anuncios la corta, y la
+ * clave de API se queda en el servidor.
  *
- * ⚠ PASO OBLIGATORIO, UNA SOLA VEZ
- * La primera solicitud que se envíe hará que FormSubmit mande un correo de
- * confirmación a rtstechnologyrd@gmail.com. Hasta que se pulse el enlace de
- * ese correo, los mensajes NO se entregan. Revisa también la carpeta de spam.
+ * Requiere definir `RESEND_API_KEY` en Vercel. Si falta, la función responde
+ * 503 y el formulario abre el cliente de correo del visitante como respaldo,
+ * de modo que nunca se pierde una solicitud.
  *
- * ⚠ DÓNDE VAN LOS DATOS
- * Las solicitudes (nombre, correo y mensaje de tus clientes) pasan por los
- * servidores de formsubmit.co antes de llegar a tu bandeja. Si prefieres otro
- * proveedor —o tu propio backend— basta con definir `VITE_CONTACT_ENDPOINT`
- * en Vercel: esa variable tiene prioridad y no hay que tocar código.
+ * `VITE_CONTACT_ENDPOINT` permite apuntar a otro servicio sin tocar código.
  */
-const ENDPOINT_POR_DEFECTO = 'https://formsubmit.co/ajax/rtstechnologyrd@gmail.com'
-
 export const endpointContacto =
-  (import.meta.env.VITE_CONTACT_ENDPOINT ?? '').trim() || ENDPOINT_POR_DEFECTO
+  (import.meta.env.VITE_CONTACT_ENDPOINT ?? '').trim() || '/api/contact'

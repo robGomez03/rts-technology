@@ -50,36 +50,63 @@ También quedan pendientes:
 
 ## El formulario de contacto
 
-Las solicitudes llegan a **rtstechnologyrd@gmail.com** a través de
-[FormSubmit](https://formsubmit.co), que no necesita cuenta ni clave de API.
+El formulario envía a **[`api/contact.ts`](api/contact.ts)**, una función
+Serverless del propio proyecto que manda el correo a
+**rtstechnologyrd@gmail.com** usando [Resend](https://resend.com).
 
-> ### ⚠ Hay que confirmar el correo una vez
->
-> La **primera** solicitud que se envíe desde la web hará que FormSubmit mande
-> un correo de confirmación a `rtstechnologyrd@gmail.com`. **Hasta que se pulse
-> el enlace de ese correo, los mensajes no se entregan.** Mira también en spam.
->
-> Envía tú mismo una solicitud de prueba nada más desplegar, confirma, y a
-> partir de ahí ya llega todo.
+Al estar en el mismo dominio que la web, no hay CORS que pueda fallar, ningún
+bloqueador de anuncios la corta, y la clave de API se queda en el servidor sin
+llegar nunca al navegador.
 
-Ten en cuenta que las solicitudes de tus clientes (nombre, correo y mensaje)
-pasan por los servidores de formsubmit.co antes de llegar a tu bandeja.
+### Puesta en marcha (una sola vez)
 
-### Cambiar de proveedor
+1. Crea una cuenta en **[resend.com](https://resend.com)** usando
+   **rtstechnologyrd@gmail.com**. Es importante que sea ese correo: el
+   remitente de pruebas solo puede enviar a la dirección del titular.
+2. Ve a **API Keys → Create API Key**, permiso *Sending access*, y copia la
+   clave (empieza por `re_`).
+3. En Vercel: **Project `rts-technology` → Settings → Environment Variables**.
+   Añade `RESEND_API_KEY` con esa clave, marcada para *Production*.
+4. **Redeploy** (Deployments → ⋯ → Redeploy). Las variables solo se aplican en
+   despliegues nuevos.
+5. Envía una solicitud de prueba desde la web.
 
-Define `VITE_CONTACT_ENDPOINT` en Vercel (*Settings → Environment Variables*) y
-esa URL tiene prioridad sobre FormSubmit, sin tocar código. Vale cualquier
-servicio que acepte JSON (Formspree, Web3Forms, Getform, o una función propia).
-El cuerpo del `POST` es:
+### Enviar desde tu propio dominio
 
-```json
-{ "nombre": "…", "email": "…", "empresa": "…", "servicio": "…", "mensaje": "…", "origen": "https://…" }
-```
+Mientras uses el remitente por defecto `onboarding@resend.dev`, Resend solo
+entrega al correo del titular de la cuenta. Para enviar a cualquier dirección
+—o para que el correo salga como `web@rtstechnology.do`— hay que verificar un
+dominio en Resend (*Domains → Add Domain*) y luego definir `CONTACT_FROM`.
 
-En local, copia `.env.example` a `.env.local`.
+### Variables disponibles
 
-Si el envío falla, el formulario muestra un aviso con el correo directo: nunca
-se traga una solicitud en silencio.
+| Variable                | Dónde     | Para qué                                       |
+| ----------------------- | --------- | ---------------------------------------------- |
+| `RESEND_API_KEY`        | Servidor  | **Obligatoria** para enviar                    |
+| `CONTACT_TO`            | Servidor  | Destinatario (por defecto el Gmail de RTS)      |
+| `CONTACT_FROM`          | Servidor  | Remitente (requiere dominio verificado)         |
+| `VITE_CONTACT_ENDPOINT` | Navegador | Apuntar a otro servicio en vez de `/api/contact` |
+
+### Si algo falla, no se pierde la solicitud
+
+- **Sin `RESEND_API_KEY`** la función responde `503` y el formulario abre el
+  cliente de correo del visitante con el mensaje ya redactado.
+- **Si el envío falla** se muestra un aviso con el correo directo, en vez de
+  fingir que se envió.
+
+Esto último importa: hay servicios de formularios que responden `HTTP 200` con
+un `success: "false"` en el cuerpo. Mirar solo el código de estado hace que la
+web diga "¡Mensaje enviado!" sin haber enviado nada, así que el formulario
+comprueba **también el cuerpo de la respuesta**.
+
+### Protecciones
+
+- Trampa antispam (campo oculto) validada en cliente **y** en servidor.
+- Rechazo de envíos hechos en menos de 2 segundos.
+- Todo el contenido del formulario se escapa antes de incrustarlo en el HTML
+  del correo, para que nadie pueda inyectar marcado.
+- El `reply_to` es el correo del cliente: puedes responder directamente desde
+  Gmail y le llega a él.
 
 ---
 
