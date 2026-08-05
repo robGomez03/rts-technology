@@ -1,13 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  Web de una sola pagina: el sitemap solo declara la raiz. Las secciones
-  (#services, #contact...) no son URLs propias y no deben listarse.
-  TODO: actualizar el dominio y la fecha al publicar.
--->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://rts-technology.pages.dev/</loc>
-    <lastmod>2026-08-01</lastmod>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
