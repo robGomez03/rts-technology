@@ -42,13 +42,29 @@ const DESTINO_POR_DEFECTO = 'rtstechnologyrd@gmail.com'
 const REMITENTE_POR_DEFECTO = 'RTS Technology <onboarding@resend.dev>'
 
 /**
- * Límite de peticiones por IP. Protege la cuota del plan gratuito de Resend
- * (100 correos/día, 3.000/mes): sin esto un bot la agota en minutos y deja el
- * formulario inservible el resto del día.
+ * Límite de peticiones por IP.
  *
- * Es "best effort": el contador vive en memoria de cada instancia y no se
- * comparte entre ellas. Frena el abuso normal, no un ataque distribuido. Para
- * un límite estricto haría falta un almacén compartido (Cloudflare KV, Upstash).
+ * ⚠ LO QUE ESTO **NO** HACE
+ * El contador vive en la memoria de cada isolate. Cloudflare reparte las
+ * peticiones entre muchos isolates, así que en producción dos peticiones
+ * seguidas casi nunca caen en el mismo y el contador no se acumula. Se
+ * comprobó contra el sitio desplegado: 8 peticiones seguidas, ningún 429.
+ *
+ * Sirve de poco más que para frenar un bucle muy rápido que caiga en el mismo
+ * isolate. NO cuentes con esto como defensa real.
+ *
+ * La protección efectiva hoy es:
+ *   1. El honeypot y la validación (descartan los bots simples).
+ *   2. El tope de 100 correos/día del plan gratuito de Resend, que acota el
+ *      daño máximo: un bot puede gastar la cuota del día, no más.
+ *
+ * Para un límite de verdad hacen falta, por orden de recomendación:
+ *   - Cloudflare Turnstile (gratis e ilimitado) verificado en esta función.
+ *   - Una regla de Rate Limiting del WAF, que solo aplica a dominios propios
+ *     (no a *.pages.dev), así que estará disponible al conectar
+ *     rtstechnology.do.
+ *   - Un almacén compartido (KV, Durable Objects). Ojo: el plan gratuito de KV
+ *     son 1.000 escrituras/día, que una avalancha agota enseguida.
  */
 const VENTANA_MS = 10 * 60 * 1000
 const MAX_POR_VENTANA = 5

@@ -107,21 +107,46 @@ resto del día.
 
 | Protección                          | Detalle                                  |
 | ----------------------------------- | ---------------------------------------- |
-| Límite por IP                       | 5 envíos cada 10 minutos → `429`         |
 | Tamaño máximo de petición           | 20 KB → `413`                            |
 | Recorte de campos                   | mensaje 5.000 car., nombre 100, resto según `LIMITES` |
 | Trampa antispam (campo oculto)      | validada en cliente **y** en servidor    |
 | Envíos en menos de 2 segundos       | rechazados (comportamiento de bot)       |
 | Escapado de HTML                    | el contenido no puede inyectar marcado en el correo |
 | Asunto sin saltos de línea          | evita asuntos malformados                |
+| Métodos distintos de POST           | `405`                                    |
+| JSON inválido o campos que faltan   | `400`                                    |
 
-> El límite por IP es *best effort*: el runtime Edge no tiene almacenamiento
-> compartido, así que el contador vive en memoria de cada instancia y no es
-> global. Frena el abuso normal, no un ataque distribuido. Para un límite
-> estricto haría falta Vercel KV o Upstash.
+> ### ⚠ El límite por IP no funciona en producción
+>
+> El código tiene un contador de 5 envíos por IP cada 10 minutos, pero vive en
+> la memoria de cada isolate. Cloudflare reparte las peticiones entre muchos,
+> así que el contador no se acumula. **Comprobado contra el sitio desplegado:
+> 8 peticiones seguidas, ningún `429`.** No cuentes con él.
+>
+> Lo que sí acota el daño hoy: el honeypot descarta los bots simples, y el
+> tope de **100 correos/día del plan gratuito de Resend** limita el peor caso a
+> perder la cuota de un día.
+>
+> La solución correcta y gratuita es **Cloudflare Turnstile** (ver abajo).
 
 El `reply_to` es el correo del cliente: puedes responder directamente desde
 Gmail y le llega a él.
+
+### Siguiente paso recomendado: Cloudflare Turnstile
+
+Es el reemplazo gratuito e ilimitado de los CAPTCHA, y es lo que de verdad
+cierra el hueco del límite por IP. La mayoría de visitantes ni ve el widget.
+
+Aún no está implementado. Cuando quieras montarlo:
+
+1. Cloudflare → **Turnstile** → *Add widget*, dominio `rts-technology.pages.dev`.
+2. Te da una **Site Key** (pública, va en el HTML) y una **Secret Key**
+   (privada, va como secret igual que `RESEND_API_KEY`).
+3. Hay que añadir el widget al formulario y verificar el token en
+   `server/contact.ts` contra
+   `https://challenges.cloudflare.com/turnstile/v0/siteverify`.
+4. La CSP necesitará `script-src` y `frame-src` para
+   `https://challenges.cloudflare.com`.
 
 ### Seguridad de la clave
 
