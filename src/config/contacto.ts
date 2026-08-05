@@ -29,31 +29,18 @@ export const contacto = {
   tiempoRespuesta: '4 horas hábiles',
 } as const
 
-/** Servicios que aparecen en el desplegable del formulario. */
-export const serviciosContacto = [
-  'Venta de Equipos',
-  'Soporte Técnico N2',
-  'Redes y Seguridad',
-  'CCTV y Cableado Estructurado',
-  'Seguridad de la Información',
-  'Automatización de Procesos',
-  'Desarrollo Web',
-  'Asesoría Tecnológica',
-] as const
-
 /**
- * Endpoint que recibe el formulario.
- *
- * Por defecto es `/api/contact`, una función Serverless del propio proyecto
- * (ver `api/contact.ts`) que envía el correo con Resend. Al estar en el mismo
- * dominio no hay CORS que falle, ningún bloqueador de anuncios la corta, y la
- * clave de API se queda en el servidor.
- *
- * Requiere definir `RESEND_API_KEY` en Vercel. Si falta, la función responde
- * 503 y el formulario abre el cliente de correo del visitante como respaldo,
- * de modo que nunca se pierde una solicitud.
- *
- * `VITE_CONTACT_ENDPOINT` permite apuntar a otro servicio sin tocar código.
+ * Servicios del desplegable del formulario.
+ * Deben coincidir con los titulos de src/components/Services.tsx.
  */
-export const endpointContacto =
-  (import.meta.env.VITE_CONTACT_ENDPOINT ?? '').trim() || '/api/contact'
+export const serviciosContacto = [
+  'Cámaras de Seguridad y CCTV',
+  'Soporte Técnico Empresarial',
+  'Redes y WiFi Empresarial',
+  'Venta y Mantenimiento de Equipos',
+  'Ciberseguridad y Respaldo de Datos',
+  'Automatización de Procesos',
+  'Diseño y Desarrollo Web',
+  'Asesoría Tecnológica',
+  'Otro / No estoy seguro',
+] as const

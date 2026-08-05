@@ -3,7 +3,8 @@ import { motion, useInView } from 'framer-motion'
 import {
   Send, MapPin, Mail, Phone, CheckCircle, AlertTriangle, Loader2, MessageCircle,
 } from 'lucide-react'
-import { contacto, endpointContacto, serviciosContacto } from '../config/contacto'
+import { contacto, serviciosContacto } from '../config/contacto'
+import { endpointContacto } from '../config/endpoint'
 
 type Estado = 'inicial' | 'enviando' | 'enviado' | 'correo' | 'error'
 

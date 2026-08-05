@@ -11,6 +11,7 @@ const links = [
   { label: 'Servicios', id: 'services' },
   { label: 'Por qué nosotros', id: 'whyus' },
   { label: 'Testimonios', id: 'testimonials' },
+  { label: 'Preguntas', id: 'preguntas' },
   { label: 'Contacto', id: 'contact' },
 ]
 

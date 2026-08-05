@@ -131,6 +131,35 @@ la sección desaparece sola.
 
 ---
 
+## 4b. Cambiar las preguntas frecuentes
+
+Fichero: **`src/config/faqs.ts`**
+
+```ts
+{
+  q: '¿Cuánto cuesta instalar cámaras de seguridad en mi empresa?',
+  a: 'El costo depende de la cantidad de cámaras...',
+},
+```
+
+Esta sección hace dos cosas a la vez:
+
+1. **Vende.** Responde justo las dudas que frenan a alguien antes de escribir.
+2. **Posiciona.** Google puede mostrar estas preguntas desplegadas debajo de tu
+   resultado, lo que ocupa más espacio en la página de búsqueda.
+
+No hay que tocar nada más: el bloque de datos estructurados se **genera solo**
+en cada compilación desde ese fichero (lo hace `vite.config.ts`). Antes estaba
+escrito a mano en `index.html` y era fácil que los dos textos se desincronizaran
+sin que nadie se enterara.
+
+> Las respuestas cerradas **siguen estando en el HTML**, solo se ocultan. Es a
+> propósito: si se borraran del documento al cerrarlas, Google no las leería y
+> perderías justo las palabras por las que quieres que te encuentren.
+
+Añade preguntas que te hagan de verdad por teléfono o WhatsApp. Son las que la
+gente también escribe en Google.
+
 ## 5. Cambiar textos y cifras
 
 | Qué | Dónde |
