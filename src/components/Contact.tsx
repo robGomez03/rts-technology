@@ -3,7 +3,7 @@ import { motion, useInView } from 'framer-motion'
 import {
   Send, MapPin, Mail, Phone, CheckCircle, AlertTriangle, Loader2, MessageCircle,
 } from 'lucide-react'
-import { contacto, serviciosContacto } from '../config/contacto'
+import { contacto, hayTelefono, hayWhatsapp, serviciosContacto } from '../config/contacto'
 import { endpointContacto } from '../config/endpoint'
 
 type Estado = 'inicial' | 'enviando' | 'enviado' | 'correo' | 'error'
@@ -155,10 +155,22 @@ export default function Contact() {
     `https://wa.me/${contacto.whatsapp}?text=` +
     encodeURIComponent('Hola, me gustaría solicitar una asesoría tecnológica.')
 
+  /*
+   * El telefono solo aparece si esta configurado en src/config/contacto.ts.
+   * Mientras no haya linea de empresa, es mejor no mostrar ninguno: un cliente
+   * que marca y no recibe respuesta no vuelve a intentarlo.
+   */
   const datos = [
     { icon: MapPin, label: 'Ubicación', value: contacto.ubicacion, href: null },
     { icon: Mail, label: 'Email', value: contacto.email, href: `mailto:${contacto.email}` },
-    { icon: Phone, label: 'Teléfono', value: contacto.telefonoVisible, href: `tel:${contacto.telefonoE164}` },
+    ...(hayTelefono
+      ? [{
+          icon: Phone,
+          label: 'Teléfono',
+          value: contacto.telefonoVisible,
+          href: `tel:${contacto.telefonoE164}`,
+        }]
+      : []),
   ]
 
   return (
@@ -200,15 +212,39 @@ export default function Contact() {
               ))}
             </ul>
 
-            <a
-              href={enlaceWhatsapp}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 py-3 px-5 rounded-xl border border-emerald-400/30 bg-emerald-400/10 text-emerald-300 text-sm font-semibold hover:bg-emerald-400/20 transition-colors"
-            >
-              <MessageCircle size={16} aria-hidden="true" />
-              Escríbenos por WhatsApp
-            </a>
+            {hayWhatsapp ? (
+              <a
+                href={enlaceWhatsapp}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 py-3 px-5 rounded-xl border border-emerald-400/30 bg-emerald-400/10 text-emerald-300 text-sm font-semibold hover:bg-emerald-400/20 transition-colors"
+              >
+                <MessageCircle size={16} aria-hidden="true" />
+                Escríbenos por WhatsApp
+              </a>
+            ) : (
+              /*
+               * Sin WhatsApp configurado, se refuerza el canal que SI funciona.
+               * Dejar el hueco vacio haria pensar que no hay forma rapida de
+               * contactar; decir cuanto se tarda en responder sostiene la
+               * confianza mientras no haya telefono.
+               */
+              <div className="rounded-xl border border-white/8 bg-white/[0.025] px-5 py-4">
+                <div className="flex items-center gap-2 mb-1.5">
+                  <MessageCircle size={15} className="text-red-400" aria-hidden="true" />
+                  <span className="text-sm font-semibold text-white">
+                    Escríbenos y te respondemos
+                  </span>
+                </div>
+                <p className="text-sm text-white/60 leading-relaxed">
+                  Usa el formulario o escríbenos a{' '}
+                  <a href={`mailto:${contacto.email}`} className="text-red-400 hover:text-red-300 underline underline-offset-2">
+                    {contacto.email}
+                  </a>
+                  . Toda solicitud recibe respuesta en menos de {contacto.tiempoRespuesta}.
+                </p>
+              </div>
+            )}
 
             <div className="mt-8 p-5 bg-red-600/5 border border-red-600/15 rounded-2xl">
               <div className="flex items-center gap-2 mb-2">
