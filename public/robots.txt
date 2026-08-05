@@ -1,7 +1,7 @@
 # RTS Technology Solutions
-# TODO: cambiar el dominio si conectas uno propio en Vercel
+# TODO: cambiar a rtstechnology.do cuando conectes el dominio propio en Cloudflare
 
 User-agent: *
 Allow: /
 
-Sitemap: https://rts-technology-robertico959-2232s-projects.vercel.app/sitemap.xml
+Sitemap: https://rts-technology.pages.dev/sitemap.xml
