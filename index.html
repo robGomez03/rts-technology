@@ -13,9 +13,13 @@
       delante.
     -->
     <title>Cámaras de Seguridad, Redes y Soporte Técnico | RTS Technology Solutions</title>
+    <!--
+      Google recorta la descripcion alrededor de los 160 caracteres. Si es mas
+      larga, la corta a mitad de frase y se ve descuidada en los resultados.
+    -->
     <meta
       name="description"
-      content="Instalación de cámaras de seguridad, CCTV, redes WiFi, cableado estructurado y soporte técnico para empresas en Santo Domingo y toda República Dominicana. Cotización sin costo y respuesta en menos de 4 horas hábiles."
+      content="Instalación de cámaras de seguridad, redes WiFi, cableado estructurado y soporte técnico para empresas en Santo Domingo y toda República Dominicana."
     />
     <meta name="author" content="RTS Technology Solutions" />
     <meta name="robots" content="index, follow, max-image-preview:large" />
@@ -83,8 +87,18 @@
     />
 
     <!--
-      Datos estructurados: permiten que Google muestre teléfono, horario y
-      ubicación directamente en los resultados de búsqueda.
+      Datos estructurados: permiten que Google muestre horario, ubicación y
+      teléfono directamente en los resultados de búsqueda.
+
+      OJO: esto es JSON, NO admite comentarios //  ni  /* */. Un comentario
+      dentro del bloque lo invalida entero y Google lo descarta sin avisar.
+
+      TODO: cuando tengas el teléfono real, añade dentro del bloque:
+            "telephone": "+1-809-XXX-XXXX",
+      Se quitó el número de ejemplo a propósito: Google lee este bloque y puede
+      mostrar el teléfono en los resultados. Publicar uno inventado es peor que
+      no publicar ninguno — el cliente marca, no le contesta nadie, y se va.
+
       TODO: mantener sincronizado con src/config/contacto.ts
     -->
     <script type="application/ld+json">
@@ -95,7 +109,6 @@
         "description": "Soluciones tecnológicas integrales para empresas en República Dominicana: redes, ciberseguridad, CCTV, cableado estructurado, soporte técnico N2, automatización de procesos y desarrollo web.",
         "url": "https://rts-technology.pages.dev/",
         "email": "rtstechnologyrd@gmail.com",
-        "telephone": "+1-809-000-0000",
         "priceRange": "$$",
         "address": {
           "@type": "PostalAddress",

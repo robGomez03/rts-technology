@@ -44,8 +44,33 @@ function faqStructuredData(): Plugin {
   }
 }
 
+/**
+ * Quita los comentarios HTML del index.html publicado.
+ *
+ * El fichero fuente lleva bastantes comentarios explicando por que las cosas
+ * estan como estan, y eso es deseable para quien mantenga el proyecto. Pero no
+ * hay razon para enviarlos a cada visitante: ocupan sitio y dejan a la vista
+ * notas internas como "TODO: telefono real" a cualquiera que mire el codigo
+ * fuente de la pagina.
+ *
+ * Se aplica solo al compilar; en desarrollo los comentarios se conservan.
+ */
+function limpiarComentariosHtml(): Plugin {
+  return {
+    name: 'rts-limpiar-comentarios-html',
+    apply: 'build',
+    enforce: 'post',
+    transformIndexHtml(html) {
+      return html
+        .replace(/\n?[ \t]*<!--[\s\S]*?-->/g, '')
+        // Compacta las lineas en blanco que deja el borrado.
+        .replace(/\n{3,}/g, '\n\n')
+    },
+  }
+}
+
 export default defineConfig({
-  plugins: [react(), faqStructuredData()],
+  plugins: [react(), faqStructuredData(), limpiarComentariosHtml()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
